@@ -326,6 +326,14 @@ then
     purge_log ~/.alex4/log.txt $nokeep;
 fi
 
+# Azureus log
+
+if test -f ~/.azureus/logs/debug_1.log;
+then
+    ecrire "Azureus debug log";
+    purge_log ~/.azureus/logs/debug_1.log $tail;
+fi
+
 # -----------------------------
 #   cache
 # -----------------------------
