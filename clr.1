@@ -1,0 +1,46 @@
+.TH CLR 1 "August 2011" "version 0.1" "Linux User's Manual"
+.SH NAME
+\fBclr\fR \- clear your home directory
+.SH SYNOPSIS
+\fBclr\fR [\-h|\-\-help]
+.PP
+\fBclr\fR [\-V|\-\-version]
+.PP
+\fBclr\fR [\-clkv] [\-f \fIfile\fR]
+.SH DESCRIPTION
+Delete useless and/or temporary files from some applications to make your home directory clear. It displays user disk space usage before and after, and display everything which is deleted.
+.PP
+This \fBclr\fR version is optimized for Ubuntu, but can be used in others Linux and BSD distributions.
+.SH OPTIONS
+.SS \-h, \-\-help
+Display the help page for your language if it exits (see \fBLANG\fR variable), else display the default help page if it exists, and if no one of theses pages exists, display a message which says it. Then the program quit.
+.SS \-V, \-\-version
+display the version of the program and quit.
+.SS \-c
+remove cookies of supported browsers. By default, these files are not deleted.
+.SS \-k
+Keep the last log file of \fBclr\fR.
+.SS \-l
+Use light mode. With this mode, log and history files are not completely cleared, \fBclr\fR keep the first or last 5 lines (see \fBhead\fR and \fBtail\fR commands).
+.SS \-v
+Make the program not verbose.
+.SS \-f \fIfile\fR
+Use an extern file for add a list of files to delete. The \fIfile\fR must have one absolute pattern per line, for each file which will be deleted, and for each directory wich will be emptied. Regular expressions are not allowed.
+.SH FILES
+.SS \fI~/.clr/clr_err.log\fR
+This is the error log of \fBclr\fR. The program delete it every time except if the \fB-k\fR option is specified.
+.SS \fI~/.clr/help/\fR
+This directory contains help pages in different languages.
+.SH ENVIRONNEMENT
+.SS LANG
+This is used by \fBclr\fR to choose what help page display.
+.SH HISTORY
+\fBclr\fR was originally developped under FreeBSD at Paris Diderot University (France), where students have their own 100MB space for storage wich is too small for three years of more. The author is one of these students, and began the development in may 2009.
+.SH AUTHOR
+Baptiste Fontaine <batifon@yahoo.fr>
+.TS
+Contact the author if you have questions, suggestions, if there is some mistakes in this page, or if you wrote a documentation for another language.
+.SH COPYRIGHT
+Copyright (C) 2011 Baptiste Fontaine License  GPLv3+:  GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>. This  is  free  software:  you  are free to change and redistribute it. There is NO WARRANTY, to the extent permitted by law.
+.SH "SEE ALSO"
+\fBlocalepurge\fR(8).
