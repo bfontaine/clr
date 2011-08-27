@@ -4,19 +4,20 @@
 # made by Baptiste Fontaine
 #
 #
-VERSION="1.4.4c"
+VERSION="1.4.4d"
 AUTHOR="Baptiste Fontaine"
 #
-# v1.4.4c - 08 août '11
-# v1.4.4b - 05 aout '11
-# v1.4.4  - 04 aout '11
-# v1.4.3  - 02 aout '11
-# v1.4.2  - 01 aout '11
-# v1.4.1c - 26 juil '11
-# v1.4.1b - 21 juil '11
-# v1.4.0  - 19 juil '11
-# v1.3.3  - 16 juil '11
-# v1.3.2  - 14 juil '11
+# v1.4.4d - 27 aug '11
+# v1.4.4c - 08 aug '11
+# v1.4.4b - 05 aug '11
+# v1.4.4  - 04 aug '11
+# v1.4.3  - 02 aug '11
+# v1.4.2  - 01 aug '11
+# v1.4.1c - 26 jul '11
+# v1.4.1b - 21 jul '11
+# v1.4.0  - 19 jul '11
+# v1.3.3  - 16 jul '11
+# v1.3.2  - 14 jul '11
 # v1.3.1  - 23 fev '11
 # v1.3.0  - 11 fev '11
 # v1.2.0  - 03 fev '11
@@ -28,7 +29,7 @@ AUTHOR="Baptiste Fontaine"
 #   USEFUL VARIABLES
 # -----------------------------
 
-# location du log
+# location of log
 LOGATION="$HOME/.clr/clr_err.log"
 
 # username
@@ -221,14 +222,6 @@ then
     purge_log ~/.cache/gwibber/gwibber.log $tail;
 fi
 
-# maintenance.sh log
-
-if test -f ~/Documents/Programmation/AppsPerso/maintenance/maintenance_log.txt;
-then
-    ecrire "Maintenance log";
-    ${RM} ~/Documents/Programmation/AppsPerso/maintenance/maintenance_log.txt 2>> $LOGATION;
-fi
-
 # Shotwell log
 
 if test -f ~/.cache/shotwell/shotwell.log;
@@ -289,6 +282,7 @@ fi
 
 if test -f ~/.config/tomboy/tomboy.log;
 then
+    ecrire "Tomboy log";
     purge_log ~/.config/tomboy/tomboy.log $default;
 fi
 
@@ -296,6 +290,7 @@ fi
 
 if test -f ~/.config/banshee-1/log;
 then
+    ecrire "Banshee log";
     purge_log ~/.config/banshee-1/log $tail;
 fi
 
