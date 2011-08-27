@@ -117,12 +117,14 @@ function ecrire() {
 }
 
 # useful variables for purge_log()
-tail="t"
-head="h"
+tail="t" # means we can keep the tail of the file
+head="h" # --------------------- head -----------
+nokeep="nk" # means no tail and no head
 default=$tail
+tmpfilepurge=".clr-tmp-file-purge~"
 
 function purge_log() {
-    # purge_log <fic> <t|h>
+    # purge_log <fic> <tail|head>
     
     if test $# -eq 2;
     then
@@ -131,8 +133,13 @@ function purge_log() {
             if test $LIGHTMODE -eq 1;
             then
                 case $2 in
-                    $tail) tail $1 > $1 && return 0 ;;
-                    $head) head $1 > $1 && return 0 ;;
+                    # TODO test if 'sponge' command is possible, and use it :
+                    #   $tail) tail $1 | sponge $1 && return 0 ;;
+                    #   $head) head $1 | sponge $1 && return 0 ;;
+                    #
+                    $tail) tail $1 > $tmpfilepurge; cat $tmpfilepurge > $1 && return 0 ;;
+                    $head) head $1 > $tmpfilepurge; cat $tmpfilepurge > $1 && return 0 ;;
+                    $nokeep) echo -n > $1 && return 0 ;;
                     *) return 1 ;;
                 esac
             else
@@ -152,9 +159,18 @@ function purge_log() {
 # create ~/.clr directory if it does not exist
 mkdir -p $HOME/.clr
 
-if test $UBUNTU_MENUPROXY == "";
+
+# test if the OS is Ubuntu
+if test -f /etc/lsb-release;
 then
-    ecrire "You do not seem to use Ubuntu. This script is more efficient with it.";
+    tmp=`head -1 /etc/lsb-release`;
+    if test ${tmp##*=} != "Ubuntu";
+    then
+        ecrire "You do not seem to use Ubuntu. This script is more efficient with it.";
+        ecrire " ";
+    fi
+else
+    ecrire "You do not seem to use GNU/Linux. This script is more efficient with it.";
     ecrire " ";
 fi
 
@@ -292,6 +308,22 @@ if test -f ~/.config/banshee-1/log;
 then
     ecrire "Banshee log";
     purge_log ~/.config/banshee-1/log $tail;
+fi
+
+# Hedgewars log
+
+if test -f ~/.hedgewars/Logs/game0.log;
+then
+    ecrire "Hedgewars game log";
+    purge_log ~/.hedgewars/Logs $nokeep;
+fi
+
+# Alex4 log
+
+if test -f ~/.alex4/log.txt;
+then
+    ecrire "Alex4 log";
+    purge_log ~/.alex4/log.txt $nokeep;
 fi
 
 # -----------------------------
