@@ -334,6 +334,14 @@ then
     purge_log ~/.azureus/logs/debug_1.log $tail;
 fi
 
+# Gephi log
+
+if test -d ~/.gephi/dev/var/log;
+then
+    ecrire "Gephi log";
+    ${RM} ~/.gephi/dev/var/log/messages.log.*;
+fi
+
 # -----------------------------
 #   cache
 # -----------------------------
