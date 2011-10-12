@@ -4,9 +4,11 @@
 # made by Baptiste Fontaine
 #
 #
-VERSION="1.4.4d"
+VERSION="1.4.4f"
 AUTHOR="Baptiste Fontaine"
 #
+# v1.4.4f - 12 oct '11
+# v1.4.4e - 29 aug '11
 # v1.4.4d - 27 aug '11
 # v1.4.4c - 08 aug '11
 # v1.4.4b - 05 aug '11
@@ -538,9 +540,25 @@ ecrire "Text editors temporary files"
 ${RM} *~
 find $HOME -name *~ -delete 2>> $LOGATION
 
-# Temporary Python compiled files
+# Adobe Flash Player temporary files
 
-# ecrire "Temporary Python Files"
+if test -d ~/.adobe/Flash_Player/AssetCache;
+then
+    ecrire "Adobe Flash Player temporary files";
+    ${RM}R ~/.adobe/Flash_Player/AssetCache/*;
+fi
+
+# Macromedia Flash Player temporary files
+
+if test -d ~/.macromedia/Flash_Player;
+then
+    ecrire "Macromedia Flash Player temporary files";
+    ${RM}R ~/.macromedia/Flash_Player/*;
+fi
+
+# Python compiled files
+
+# ecrire "Python compiled files"
 # find $HOME -name *.pyc -delete 2>> $LOGATION
 
 # Temporary Eclipse files
