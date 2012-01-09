@@ -199,6 +199,14 @@ then
     purge_log $LOGATION $tail;
 fi
 
+# Tyrs log file
+
+if test -f ~/.config/tyrs/tyrs.log;
+then
+    ecrire "Tyrs log file";
+    purge_log ~/.config/tyrs/tyrs.log $tail;
+fi
+
 # MySQL error log
 
 if test -f /var/log/mysql/error.log;
