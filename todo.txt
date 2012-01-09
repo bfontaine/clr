@@ -1,0 +1,10 @@
+Add support for the following command:
+    $ clr /path/to/a/directory
+    
+    => clear only one directory (recursively)
+
+With an option (like --class, for example), remove all .class files if there is a .java file with the same name in the same directory.
+
+make a function:
+    clr_file(msg, file_path, $tail|$head):
+        test if file exists, display msg, and clear file
