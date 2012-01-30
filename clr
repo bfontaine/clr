@@ -7,7 +7,7 @@
 VERSION="1.4.4g"
 AUTHOR="Baptiste Fontaine"
 #
-# v1.4.4g - 30 jan '12
+# v1.4.4g - 09 jan '12
 # v1.4.4f - 12 oct '11
 # v1.4.4e - 29 aug '11
 # v1.4.4d - 27 aug '11
@@ -198,6 +198,14 @@ if test $RM_LAST_LOG == 1;
 then
     ecrire "Clr log file";
     purge_log $LOGATION $tail;
+fi
+
+# Tyrs log file
+
+if test -f ~/.config/tyrs/tyrs.log;
+then
+    ecrire "Tyrs log file";
+    purge_log ~/.config/tyrs/tyrs.log $tail;
 fi
 
 # MySQL error log
