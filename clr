@@ -4,9 +4,10 @@
 # made by Baptiste Fontaine
 #
 #
-VERSION="1.4.4f"
+VERSION="1.4.4g"
 AUTHOR="Baptiste Fontaine"
 #
+# v1.4.4g - 30 jan '12
 # v1.4.4f - 12 oct '11
 # v1.4.4e - 29 aug '11
 # v1.4.4d - 27 aug '11
@@ -595,6 +596,12 @@ fi
 if test -d ~/.thumbnails/normal/small;
 then
     ${RM}R ~/.thumbnails/small/* 2>> $LOGATION;
+fi
+
+if test -d ~/.shotwell/thumbs;
+then
+    ecrire "Shotwell Thumbnails";
+    ${RM} ~/.shotwell/thumbs/thumbs*/* 2>> $LOGATION;
 fi
 
 # -----------------------------
