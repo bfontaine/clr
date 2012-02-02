@@ -4,3 +4,5 @@ Add support for the following command:
     => clear only one directory (recursively)
 
 With an option (like --class, for example), remove all .class files if there is a .java file with the same name in the same directory.
+
+See : ~/.mozilla/firefox/Crash Reports/
