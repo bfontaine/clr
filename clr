@@ -4,9 +4,10 @@
 # made by Baptiste Fontaine
 #
 #
-VERSION="1.4.4h"
+VERSION="1.4.4i"
 AUTHOR="Baptiste Fontaine"
 #
+# v1.4.4i - 27 feb '12
 # v1.4.4h - 30 jan '12
 # v1.4.4g - 09 jan '12
 # v1.4.4f - 12 oct '11
@@ -515,6 +516,14 @@ if test -f ~/.wxglade/file_history.txt;
 then
     ecrire "Wxglade file history";
     echo "# -*- coding: utf-8 -*-" > ~/.wxglade/file_history.txt 2>> $LOGATION;
+fi
+
+# PostgreSQL commands history
+
+if test -f ~/.psql_history;
+then
+    ecrire "PostgreSQL commands history";
+    ${RM} ~/.psql_history;
 fi
 
 # -----------------------------
