@@ -4,10 +4,10 @@
 # made by Baptiste Fontaine
 #
 #
-VERSION="1.4.4i"
+VERSION="1.4.5"
 AUTHOR="Baptiste Fontaine"
 #
-# v1.4.4i - 27 feb '12
+# v1.4.5  - 27 feb '12
 # v1.4.4h - 30 jan '12
 # v1.4.4g - 09 jan '12
 # v1.4.4f - 12 oct '11
@@ -69,12 +69,12 @@ then
     if test $1 == "--help";
     then
         printf "$HELP\n";
-        exit;
+        exit 0;
     else
         if test $1 == "--version" || test $1 == "--Version";
         then
             echo $VERSION;
-            exit;
+            exit 0;
         fi
     fi
 fi
@@ -171,6 +171,16 @@ function purge_log() {
     fi
     
     return 1;
+}
+
+function rm_file() {
+    # rm_file <path> <msg>
+
+    if test -f $1;
+    then
+        ecrire "$2";
+        ${RM} $1 2>> $LOGATION;
+    fi
 }
 
 
@@ -431,11 +441,7 @@ fi
 
 # Epiphany favicon cache list
 
-if test -f ~/.gnome2/epiphany/ephy-favicon-cache.xml;
-then
-    ecrire "Epiphany favicon cache";
-    ${RM} ~/.gnome2/epiphany/ephy-favicon-cache.xml 2>> $LOGATION;
-fi
+rm_file ~/.gnome2/epiphany/ephy-favicon-cache.xml "Epiphany favicon cache";
 
 # Epiphany favicon cache files
 
@@ -482,27 +488,15 @@ fi
 
 # Stardict history
 
-if test -f ~/.stardict/history;
-then
-    ecrire "StarDict history";
-    purge_log ~/.stardict/history $default;
-fi
+rm_file ~/.stardict/history "StarDict history";
 
 # Konqueror history
 
-if test -f ~/.kde/share/apps/konqueror/konq_history;
-then
-    ecrire "Konqueror history";
-    ${RM} ~/.kde/share/apps/konqueror/konq_history 2>> $LOGATION;
-fi
+rm_file ~/.kde/share/apps/konqueror/konq_history "Konqueror history";
 
 # Epiphany history
 
-if test -f ~/.gnome2/epiphany/ephy-history.xml;
-then
-    ecrire "Epiphany history";
-    ${RM} ~/.gnome2/epiphany/ephy-history.xml 2>> $LOGATION;
-fi
+rm_file ~/.gnome2/epiphany/ephy-history.xml "Epiphany history";
 
 # Chromium history
 
@@ -513,19 +507,11 @@ fi
 
 # Rekonq history
 
-if test -f ~/.kde/share/apps/rekonq/history;
-then
-    ecrire "Rekonq history";
-    ${RM} ~/.kde/share/apps/rekonq/history 2>> $LOGATION;
-fi
+rm_file ~/.kde/share/apps/rekonq/history "Rekonq history";
 
 # Uzbl history
 
-if test -f ~/.local/share/uzbl/history;
-then
-    ecrire "Uzbl history";
-    ${RM} ~/.local/share/uzbl/history 2>> $LOGATION;
-fi
+rm_file ~/.local/share/uzbl/history "Uzbl history";
 
 # Wxglade file history
 
@@ -537,11 +523,7 @@ fi
 
 # PostgreSQL commands history
 
-if test -f ~/.psql_history;
-then
-    ecrire "PostgreSQL commands history";
-    ${RM} ~/.psql_history 2>> $LOGATION;
-fi
+rm_file ~/.psql_history "PostgreSQL commands history";
 
 # -----------------------------
 #   temporary files
@@ -648,11 +630,7 @@ then
 
     # Midori cookies
 
-    if test -f ~/.config/midori/cookies.txt;
-    then
-        ecrire "Midori cookies";
-        ${RM} ~/.config/midori/cookies.txt 2>> $LOGATION;
-    fi
+    rm_file ~/.config/midori/cookies.txt "Midori cookies";
     
     # Chromium cookies
     
@@ -672,11 +650,7 @@ then
     
     # Uzbl cookies
     
-    if test -f ~/.local/share/uzbl/cookies.txt;
-    then
-        ecrire "Uzbl cookies";
-        ${RM} ~/.local/share/uzbl 2>> $LOGATION;
-    fi
+    rm_file ~/.local/share/uzbl/cookies.txt; "Uzbl cookies";
 fi
 
 # -----------------------------
