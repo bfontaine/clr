@@ -127,13 +127,13 @@ head="h" #   "   "   "   "   "   head  "   "   "
 nokeep="nk" # means no tail and no head
 default=$tail
 
-if ( $(which sponge) );
+if [ $(which sponge) ];
 then
     use_sponge=1;
 else
     tmpfilepurge=".clr-tmp-file-purge~"
 
-    if ( $(which tempfile) );
+    if [ $(which tempfile) ];
     then
         tmpfilepurge=$(tempfile);
     fi
