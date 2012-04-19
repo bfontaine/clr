@@ -4,31 +4,8 @@
 # made by Baptiste Fontaine
 #
 #
-VERSION="1.4.5"
-AUTHOR="Baptiste Fontaine"
-#
-# v1.4.5  - 27 feb '12
-# v1.4.4h - 30 jan '12
-# v1.4.4g - 09 jan '12
-# v1.4.4f - 12 oct '11
-# v1.4.4e - 29 aug '11
-# v1.4.4d - 27 aug '11
-# v1.4.4c - 08 aug '11
-# v1.4.4b - 05 aug '11
-# v1.4.4  - 04 aug '11
-# v1.4.3  - 02 aug '11
-# v1.4.2  - 01 aug '11
-# v1.4.1c - 26 jul '11
-# v1.4.1b - 21 jul '11
-# v1.4.0  - 19 jul '11
-# v1.3.3  - 16 jul '11
-# v1.3.2  - 14 jul '11
-# v1.3.1  - 23 fev '11
-# v1.3.0  - 11 fev '11
-# v1.2.0  - 03 fev '11
-# v1.1.1  - 26 jan '11
-# v1.1.0  - 25 nov '10
-#
+VERSION='1.5.0'
+AUTHOR='Baptiste Fontaine'
 
 # -----------------------------
 #   USEFUL VARIABLES
@@ -41,18 +18,18 @@ LOGATION="$HOME/.clr/clr_err.log"
 USERNAME=$(whoami)
 
 # useful commands
-RM="rm -f"
-DU="du -s"
+RM='rm -f'
+DU='du -s'
 
 # -----------------------------
 #   HELP
 # -----------------------------
 
-if test -f ${HOME}/.clr/help/clr-help-${LANG%%_*}.txt;
+if [ -f ${HOME}/.clr/help/clr-help-${LANG%%_*}.txt ];
 then
     HELP=$(cat ${HOME}/.clr/help/clr-help-${LANG%%_*}.txt);
 else
-    if test -f ${HOME}/.clr/help/clr-help-default.txt;
+    if [ -f ${HOME}/.clr/help/clr-help-default.txt ];
     then
         HELP=$(cat ${HOME}/.clr/help/clr-help-default.txt);
     else
@@ -64,14 +41,14 @@ fi
 #  LONG OPTIONS
 # -----------------------------
 
-if test $# -eq 1;
+if [ $# -eq 1 ];
 then
-    if test $1 == "--help";
+    if [ $1 == '--help' ];
     then
         printf "$HELP\n";
         exit 0;
     else
-        if test $1 == "--version" || test $1 == "--Version";
+        if [ $1 == '--version' ] || [ $1 == '--Version' ];
         then
             echo $VERSION;
             exit 0;
@@ -83,17 +60,20 @@ fi
 #  SHORT OPTIONS
 # -----------------------------
 
-DEL_LIST_FILE="None"
+DEL_LIST_FILE='None'
 RM_LAST_LOG=1
 VERBOSE=1
 LIGHTMODE=0
 RM_COOKIES=0
+CHECK_DISK_SPACE=1
 
-while getopts :cf:hklVv arg;
+while getopts :cdf:hklVv arg;
 do
     case $arg in
         # -c(ookies)
         c) RM_COOKIES=1 ;;
+        # -d(o not check disk space)
+        d) CHECK_DISK_SPACE=0 ;;
         # -f <file>
         f) DEL_LIST_FILE=$OPTARG ;;
         # -h(elp)
@@ -113,25 +93,25 @@ done
 #   FUNCTIONS
 # -----------------------------
 
-# "ecrire" means "write" in French
+# 'ecrire' means 'write' in French
 function ecrire() {
-    if test $VERBOSE -eq 1;
+    if [ $VERBOSE -eq 1 ];
     then
         echo $*;
     fi
 }
 
 # useful variables for purge_log()
-tail="t" # means we can keep the tail of the file
-head="h" #   "   "   "   "   "   head  "   "   "
-nokeep="nk" # means no tail and no head
+tail='t' # means we can keep the tail of the file
+head='h' #   '   '   '   '   '   head  '   '   '
+nokeep='nk' # means no tail and no head
 default=$tail
 
 if [ $(which sponge) ];
 then
     use_sponge=1;
 else
-    tmpfilepurge=".clr-tmp-file-purge~"
+    tmpfilepurge='/tmp/clr-tmp-file-purge'
 
     if [ $(which tempfile) ];
     then
@@ -142,11 +122,11 @@ fi
 function purge_log() {
     # purge_log <fic> <tail|head>
     
-    if test $# -eq 2;
+    if [ $# -eq 2 ];
     then
-        if test -f $1;
+        if [ -f $1 ];
         then
-            if test $LIGHTMODE -eq 1;
+            if [ $LIGHTMODE -eq 1 ];
             then
                 if [ $use_sponge -eq 1 ];
                 then
@@ -176,7 +156,7 @@ function purge_log() {
 function rm_file() {
     # rm_file <path> <msg>
 
-    if test -f $1;
+    if [ -f $1 ];
     then
         ecrire "$2";
         ${RM} $1 2>> $LOGATION;
@@ -192,25 +172,21 @@ function rm_file() {
 mkdir -p $HOME/.clr
 
 
-# test if the OS is Ubuntu
-if test -f /etc/lsb-release;
+# [ if the OS is not GNU/linux ]
+if ! [ -f /etc/lsb-release ];
 then
-    tmp=`head -1 /etc/lsb-release`;
-    if test ${tmp##*=} != "Ubuntu";
-    then
-        ecrire "You do not seem to use Ubuntu. This script is more efficient with it.";
-        ecrire " ";
-    fi
-else
-    ecrire "You do not seem to use GNU/Linux. This script is more efficient with it.";
-    ecrire " ";
+    ecrire 'You do not seem to use GNU/Linux. This script is more efficient with it.';
+    ecrire ' ';
 fi
 
-BEFORE=$(${DU} . 2> /dev/null | cut -f1)
+if [ $CHECK_DISK_SPACE -ne 0 ];
+then
+    BEFORE=$(${DU} . 2> /dev/null | cut -f1)
 
-ecrire "Disc usage:"
-ecrire $(${DU}hc ~ | grep total | awk '{print $1}')
-ecrire "clear..."
+    ecrire 'Disc usage:'
+    ecrire $(${DU}hc ~ | grep total | awk '{print $1}')
+fi
+ecrire 'clearing...'
 
 
 # -----------------------------
@@ -223,47 +199,47 @@ ecrire "clear..."
 
 # clr.sh log file
 
-if test $RM_LAST_LOG == 1;
+if [ $RM_LAST_LOG == 1 ];
 then
-    ecrire "Clr log file";
+    ecrire 'Clr log file';
     purge_log $LOGATION $tail;
 fi
 
 # Tyrs log file
 
-if test -f ~/.config/tyrs/tyrs.log;
+if [ -f ~/.config/tyrs/tyrs.log ];
 then
-    ecrire "Tyrs log file";
+    ecrire 'Tyrs log file';
     purge_log ~/.config/tyrs/tyrs.log $tail;
 fi
 
 # MySQL error log
 
-if test -f /var/log/mysql/error.log;
+if [ -f /var/log/mysql/error.log ];
 then
-    ecrire "MySQL Error log";
+    ecrire 'MySQL Error log';
     purge_log /var/log/mysql/error.log $tail;
 fi
 
 # Zeitgeist old logs
 
-if test -d ~/.cache/zeitgeist;
+if [ -d ~/.cache/zeitgeist ];
 then
-    ecrire "Zeitgeist old logs";
+    ecrire 'Zeitgeist old logs';
     ${RM} ~/.cache/zeitgeist/daemon.log.* 2>> $LOGATION;
 fi
 
 # Ubuntu One old logs
 
-if test -d ~/.cache/ubuntuone/log;
+if [ -d ~/.cache/ubuntuone/log ];
 then
-    ecrire "Ubuntu One logs"
+    ecrire 'Ubuntu One logs'
     for f in ~/.cache/ubuntuone/*.log;
     do
         purge_log $f $tail;
     done
     
-    ecrire "Ubuntu One old logs"
+    ecrire 'Ubuntu One old logs'
     ${RM} ~/.cache/ubuntuone/log/credentials.log.* 2>> $LOGATION;
     ${RM} ~/.cache/ubuntuone/log/syncdaemon-exceptions.log.* 2>> $LOGATION;
     ${RM} ~/.cache/ubuntuone/log/syncdaemon.log.* 2>> $LOGATION;
@@ -272,113 +248,113 @@ fi
 
 # Gwibber log
 
-if test -f ~/.cache/gwibber/gwibber.log;
+if [ -f ~/.cache/gwibber/gwibber.log ];
 then
-    ecrire "Gwibber logs";
+    ecrire 'Gwibber logs';
     purge_log ~/.cache/gwibber/gwibber.log $tail;
 fi
 
 # Shotwell log
 
-if test -f ~/.cache/shotwell/shotwell.log;
+if [ -f ~/.cache/shotwell/shotwell.log ];
 then
-    ecrire "Shotwell logs";
+    ecrire 'Shotwell logs';
     purge_log ~/.cache/shotwell/shotwell.log $tail;
 fi
 
 # SSO-client log
 
-if test -f ~/.cache/sso/sso-client.log;
+if [ -f ~/.cache/sso/sso-client.log ];
 then
-    ecrire "SSO logs";
+    ecrire 'SSO logs';
     purge_log ~/.cache/sso/sso-client.log $tail;
 fi
 
 # Software center log
 
-if test -f ~/.cache/software-center/software-center.log;
+if [ -f ~/.cache/software-center/software-center.log ];
 then
-    ecrire "Software center logs";
+    ecrire 'Software center logs';
     purge_log ~/.cache/software-center/software-center.log $tail;
 fi
 
 # Notify-osd log
 
-if test -f ~/.cache/notify-osd.log;
+if [ -f ~/.cache/notify-osd.log ];
 then
-    ecrire "Old desktop notifications";
+    ecrire 'Old desktop notifications';
     purge_log ~/.cache/notify-osd.log $tail;
 fi
 
 # Checkbox log
 
-if test -f ~/.cache/checkbox/checkbox.log;
+if [ -f ~/.cache/checkbox/checkbox.log ];
 then
-    ecrire "Checkbox logs";
+    ecrire 'Checkbox logs';
     purge_log ~/.cache/checkbox/checkbox.log $tail;
 fi
 
 # Desktop-couch log
 
-if test -d ~/.cache/desktop-couch/log;
+if [ -d ~/.cache/desktop-couch/log ];
 then
-    ecrire "Old desktop couch logs";
+    ecrire 'Old desktop couch logs';
     ${RM} ~/.cache/desktop-couch/log/*.log.*;
 fi
 
 # Inkscape extension error log
 
-if test -f ~/.config/inkscape/extension-errors.log;
+if [ -f ~/.config/inkscape/extension-errors.log ];
 then
-    ecrire "Inkscape extensions error log";
+    ecrire 'Inkscape extensions error log';
     purge_log ~/.config/inkscape/extension-errors.log $default;
 fi
 
 # Tomboy log
 
-if test -f ~/.config/tomboy/tomboy.log;
+if [ -f ~/.config/tomboy/tomboy.log ];
 then
-    ecrire "Tomboy log";
+    ecrire 'Tomboy log';
     purge_log ~/.config/tomboy/tomboy.log $default;
 fi
 
 # Banshee log
 
-if test -f ~/.config/banshee-1/log;
+if [ -f ~/.config/banshee-1/log ];
 then
-    ecrire "Banshee log";
+    ecrire 'Banshee log';
     purge_log ~/.config/banshee-1/log $tail;
 fi
 
 # Hedgewars log
 
-if test -f ~/.hedgewars/Logs/game0.log;
+if [ -f ~/.hedgewars/Logs/game0.log ];
 then
-    ecrire "Hedgewars game log";
+    ecrire 'Hedgewars game log';
     purge_log ~/.hedgewars/Logs $nokeep;
 fi
 
 # Alex4 log
 
-if test -f ~/.alex4/log.txt;
+if [ -f ~/.alex4/log.txt ];
 then
-    ecrire "Alex4 log";
+    ecrire 'Alex4 log';
     purge_log ~/.alex4/log.txt $nokeep;
 fi
 
 # Azureus log
 
-if test -f ~/.azureus/logs/debug_1.log;
+if [ -f ~/.azureus/logs/debug_1.log ];
 then
-    ecrire "Azureus debug log";
+    ecrire 'Azureus debug log';
     purge_log ~/.azureus/logs/debug_1.log $tail;
 fi
 
 # Gephi log
 
-if test -d ~/.gephi/dev/var/log;
+if [ -d ~/.gephi/dev/var/log ];
 then
-    ecrire "Gephi log";
+    ecrire 'Gephi log';
     ${RM} ~/.gephi/dev/var/log/messages.log.* 2>> $LOGATION;
 fi
 
@@ -388,81 +364,77 @@ fi
 
 # Chromium cache
 
-if test -d ~/.cache/chromium/Default/Cache;
+if [ -d ~/.cache/chromium/Default/Cache ];
 then
-    ecrire "Chromium cache";
+    ecrire 'Chromium cache';
     ${RM} ~/.cache/chromium/Default/Cache/* 2>> $LOGATION;
 fi
 
 # Gwibber avatars cache
 
-if test -d ~/.cache/gwibber/avatars;
+if [ -d ~/.cache/gwibber/avatars ];
 then
-    ecrire "Gwibber avatars cache";
+    ecrire 'Gwibber avatars cache';
     ${RM} ~/.cache/gwibber/avatars/* 2>> $LOGATION;
 fi
 
 # transmission favicons cache
 
-if test -d ~/.cache/transmission/favicons;
+if [ -d ~/.cache/transmission/favicons ];
 then
-    ecrire "Transmission favicons cache";
+    ecrire 'Transmission favicons cache';
     ${RM} ~/.cache/transmission/favicons/* 2>> $LOGATION;
 fi
 
 # Wallpaper cache
 
-if test -d ~/.cache/wallpaper;
+if [ -d ~/.cache/wallpaper ];
 then
-    ecrire "Wallpaper cache";
+    ecrire 'Wallpaper cache';
     ${RM} ~/.cache/wallpaper/* 2>> $LOGATION;
 fi
 
 # Liferea favicons cache
 
-if test -d ~/.liferea_1.6/cache/favicons:
+if [ -d ~/.liferea_1.6/cache/favicons: ]
 then
-    ecrire "Liferea favicons cache";
+    ecrire 'Liferea favicons cache';
     ${RM} ~/.liferea_1.6/cache/favicons/* 2>> $LOGATION;
 fi
 
 # Seamonkey cache
 
-if test -d ~/.mozilla/seamonkey;
+if [ -d ~/.mozilla/seamonkey ];
 then
-    for f in ~/.mozilla/seamonkey/*;
-    do
-        if test -d $f/Cache;
-        then
-            ${RM} $f/Cache/* 2>> $LOGATION;
-        fi
+    for f in ~/.mozilla/seamonkey/*; do
+        [ -d $f/Cache ] && ${RM} $f/Cache/* 2>> $LOGATION;
     done
 fi
 
 # Epiphany favicon cache list
 
-rm_file ~/.gnome2/epiphany/ephy-favicon-cache.xml "Epiphany favicon cache";
+rm_file ~/.gnome2/epiphany/ephy-favicon-cache.xml 'Epiphany favicon cache';
 
 # Epiphany favicon cache files
 
-if test -d ~/.gnome2/epiphany/favicon_cache;
+if [ -d ~/.gnome2/epiphany/favicon_cache ];
 then
     ${RM} ~/.gnome2/epiphany/favicon_cache/* 2>> $LOGATION;
 fi
 
 # Midori (fav)icons cache
 
-if test -d ~/.cache/midori/icons;
+if [ -d ~/.cache/midori/icons ];
 then
-    ecrire "Midori icons cache"
+    ecrire 'Midori icons cache'
     ${RM} ~/.cache/midori/icons/* 2>> $LOGATION;
 fi
 
 # Clementine network cache
 
-if test -d ~/.config/Clementine/networkcache/http;
+if [ -d ~/.config/Clementine/networkcache/http ];
 then
-    ecrire "Clementine network cache";
+    ecrire 'Clementine network cache';
     ${RM} ~/.config/Clementine/networkcache/http/*.cache 2>> $LOGATION;
 fi
 
@@ -472,68 +444,68 @@ fi
 
 # bash history
 
-if test -f ${HISTFILE:-"$HOME/.bash_history"};
+if [ -f ${HISTFILE:-"$HOME/.bash_history"} ];
 then
-    ecrire "Bash history";
+    ecrire 'Bash history';
     purge_log ${HISTFILE:-"$HOME/.bash_history"} $default; #todo
 fi
 
 # MySQL (command-line) history
 
-if test -f ~/.mysql_history;
+if [ -f ~/.mysql_history ];
 then
-    ecrire "MySQL history";
+    ecrire 'MySQL history';
     purge_log ~/.mysql_history $default; #todo
 fi
 
 # Stardict history
 
-rm_file ~/.stardict/history "StarDict history";
+rm_file ~/.stardict/history 'StarDict history';
 
 # Konqueror history
 
-rm_file ~/.kde/share/apps/konqueror/konq_history "Konqueror history";
+rm_file ~/.kde/share/apps/konqueror/konq_history 'Konqueror history';
 
 # Epiphany history
 
-rm_file ~/.gnome2/epiphany/ephy-history.xml "Epiphany history";
+rm_file ~/.gnome2/epiphany/ephy-history.xml 'Epiphany history';
 
 # Chromium history
 
-if test -d ~/.config/chromium/Default;
+if [ -d ~/.config/chromium/Default ];
 then
     ${RM} ~/.config/chromium/Default/History\ Index\ * 2>> $LOGATION;
 fi
 
 # Rekonq history
 
-rm_file ~/.kde/share/apps/rekonq/history "Rekonq history";
+rm_file ~/.kde/share/apps/rekonq/history 'Rekonq history';
 
 # Uzbl history
 
-rm_file ~/.local/share/uzbl/history "Uzbl history";
+rm_file ~/.local/share/uzbl/history 'Uzbl history';
 
 # Wxglade file history
 
-if test -f ~/.wxglade/file_history.txt;
+if [ -f ~/.wxglade/file_history.txt ];
 then
-    ecrire "Wxglade file history";
-    echo "# -*- coding: utf-8 -*-" > ~/.wxglade/file_history.txt 2>> $LOGATION;
+    ecrire 'Wxglade file history';
+    echo '# -*- coding: utf-8 -*-' > ~/.wxglade/file_history.txt 2>> $LOGATION;
 fi
 
 # PostgreSQL commands history
 
-rm_file ~/.psql_history "PostgreSQL commands history";
+rm_file ~/.psql_history 'PostgreSQL commands history';
 
 # cmus
 
-if test -d ~/.cmus;
+if [ -d ~/.cmus ];
 then
-    ecrire "Cmus commands history"
-    echo -n > ~/.cmus/command-history 2>> $LOGATION;
+    ecrire 'Cmus commands history'
+    purge_log ~/.cmus/command-history;
 
-    ecrire "Cmus search history"
-    echo -n > ~/.cmus/search-history 2>> $LOGATION;
+    ecrire 'Cmus search history'
+    purge_log ~/.cmus/search-history;
 fi
 
 # -----------------------------
@@ -542,67 +514,67 @@ fi
 
 # Internet Explorer (wine) temporary files
 
-if test -d ~/.wine;
+if [ -d ~/.wine ];
 then
-    if test -d ~/.wine/drive_c/users/$USERNAME/Local\ Settings/Temporary\ Internet\ Files/;
+    if [ -d ~/.wine/drive_c/users/$USERNAME/Local\ Settings/Temporary\ Internet\ Files/ ];
     then
-        ecrire "IE temporary files";
+        ecrire 'IE temporary files';
         ${RM}R ~/.wine/drive_c/users/$USERNAME/Local\ Settings/Temporary\ Internet\ Files/ 2>> $LOGATION;
     fi
 fi
 
 # Tex temporary files
 
-ecrire "Tex temporary files"
+ecrire 'Tex temporary files'
 find $HOME -name *.aux -delete 2>> $LOGATION
 find $HOME -name *.tex.backup -delete 2>> $LOGATION
 
 # Tex index temporary files
 
-ecrire "Index temporary files"
+ecrire 'Index temporary files'
 find $HOME -name *.ilg -delete 2>> $LOGATION
 find $HOME -name *.ind -delete 2>> $LOGATION
 
 # XEmacs, Kwrite [, ...] temporary saved files
 
-ecrire "Text editors temporary files"
+ecrire 'Text editors temporary files'
 ${RM} *~
 find $HOME -name *~ -delete 2>> $LOGATION
 
 # Adobe Flash Player temporary files
 
-if test -d ~/.adobe/Flash_Player/AssetCache;
+if [ -d ~/.adobe/Flash_Player/AssetCache ];
 then
-    ecrire "Adobe Flash Player temporary files";
+    ecrire 'Adobe Flash Player temporary files';
     ${RM}R ~/.adobe/Flash_Player/AssetCache/* 2>> $LOGATION;
 fi
 
 # Macromedia Flash Player temporary files
 
-if test -d ~/.macromedia/Flash_Player;
+if [ -d ~/.macromedia/Flash_Player ];
 then
-    ecrire "Macromedia Flash Player temporary files";
+    ecrire 'Macromedia Flash Player temporary files';
     ${RM}R ~/.macromedia/Flash_Player/* 2>> $LOGATION;
 fi
 
 # Python compiled files
 
-# ecrire "Python compiled files"
+# ecrire 'Python compiled files'
 # find $HOME -name *.pyc -delete 2>> $LOGATION
 
 # Temporary Eclipse files
 
-# if test -d ~/.mozilla/eclipse;
+# if [ -d ~/.mozilla/eclipse ];
 # then
-#     ecrire "Eclipse temporary files";
+#     ecrire 'Eclipse temporary files';
 #     ${RM}R ~/.mozilla/eclipse/ 2>> $LOGATION;
 # fi
 
 # Temporary Firefox files
 
-# if test -d ~/.mozilla/firefox;
+# if [ -d ~/.mozilla/firefox ];
 # then
-#     ecrire "Firefox temporary files";
+#     ecrire 'Firefox temporary files';
 #     ${RM}R ~/.mozilla/firefox/ 2>> $LOGATION;
 # fi
 
@@ -610,25 +582,25 @@ fi
 #   thumbnails
 # -----------------------------
 
-if test -d ~/.thumbnails/normal;
+if [ -d ~/.thumbnails/normal ];
 then
-    ecrire "Thumbnails";
+    ecrire 'Thumbnails';
     ${RM}R ~/.thumbnails/normal/* 2>> $LOGATION;
 fi
 
-if test -d ~/.thumbnails/normal/fail;
+if [ -d ~/.thumbnails/normal/fail ];
 then
     ${RM}R ~/.thumbnails/fail/* 2>> $LOGATION;
 fi
 
-if test -d ~/.thumbnails/normal/small;
+if [ -d ~/.thumbnails/normal/small ];
 then
     ${RM}R ~/.thumbnails/small/* 2>> $LOGATION;
 fi
 
-if test -d ~/.shotwell/thumbs;
+if [ -d ~/.shotwell/thumbs ];
 then
-    ecrire "Shotwell Thumbnails";
+    ecrire 'Shotwell Thumbnails';
     ${RM} ~/.shotwell/thumbs/thumbs*/* 2>> $LOGATION;
 fi
 
@@ -636,32 +608,32 @@ fi
 #   browsers: cookies & local storage
 # -----------------------------
 
-if test $RM_COOKIES -eq 1;
+if [ $RM_COOKIES -eq 1 ];
 then
 
     # Midori cookies
 
-    rm_file ~/.config/midori/cookies.txt "Midori cookies";
+    rm_file ~/.config/midori/cookies.txt 'Midori cookies';
     
     # Chromium cookies
     
-    if test -f ~/.config/chromium/Default/Cookies;
+    if [ -f ~/.config/chromium/Default/Cookies ];
     then
-        ecrire "Chromium cookies";
+        ecrire 'Chromium cookies';
         echo -n > ~/.config/chromium/Default/Cookies 2>> $LOGATION;
     fi
     
     # Chromium local storage
     
-    if test -d ~/.config/chromium/Default/Local\ Storage;
+    if [ -d ~/.config/chromium/Default/Local\ Storage ];
     then
-        ecrire "Chromium local storage";
+        ecrire 'Chromium local storage';
         ${RM} ~/.config/chromium/Default/Local\ Storage/* 2>> $LOGATION;
     fi
     
     # Uzbl cookies
     
-    rm_file ~/.local/share/uzbl/cookies.txt; "Uzbl cookies";
+    rm_file ~/.local/share/uzbl/cookies.txt; 'Uzbl cookies';
 fi
 
 # -----------------------------
@@ -670,9 +642,9 @@ fi
 
 # Recent documents
 
-if test -d ~/.kde/share/apps/RecentDocuments;
+if [ -d ~/.kde/share/apps/RecentDocuments ];
 then
-    ecrire "Recent Documents list";
+    ecrire 'Recent Documents list';
     ${RM} ~/.kde/share/apps/RecentDocuments/* 2>> $LOGATION;
 fi
 
@@ -680,21 +652,21 @@ fi
 #   personal file
 # -----------------------------
 
-if test $DEL_LIST_FILE != "None";
+if [ $DEL_LIST_FILE != 'None' ];
 then
-    if test -f $2;
+    if [ -f $2 ];
     then
         for fic in $(cat $2);
         do
-            if test -f $fic;
+            if [ -f $fic ];
             then
-                printf "deleting %s...\n" $fic;
+                printf 'deleting %s...\n' $fic;
                 ${RM} $fic;
             else
-                if test -d $fic;
+                if [ -d $fic ];
                 then
-                    printf "deleting content of %s...\n" $fic;
-                    ${RM}R "${fic%"/"}/*";
+                    printf 'deleting content of %s...\n' $fic;
+                    ${RM}R "${fic%'/'}/*";
                 fi
             fi
         done
@@ -707,39 +679,39 @@ fi
 #   CLEANING [END]
 # -----------------------------
 
-if test $VERBOSE -eq 1;
-then
-    clear;
-fi
+[ $VERBOSE -ne 0 ] && clear;
 
 # -----------------------------
 #   AFTER
 # -----------------------------
 
-AFTER=$(($BEFORE-$(${DU} . | cut -f1)))
-
-if test $AFTER -lt 0;
+if [ $CHECK_DISK_SPACE -ne 0 ];
 then
-    echo "$((-$AFTER)) Kio more after clr usage." >> $LOGATION; 
-    AFTER="0 Kio";
-else
-    if test $AFTER -gt 1024;
-    then
-        AFTER=$(($AFTER/1024));
-        
-        if test $AFTER -gt 1024;
-        then
-            AFTER="$(($AFTER/1024)) Gio";
-        else
-            AFTER="${AFTER} Mio";
-        fi
-    else
-        AFTER="${AFTER} Kio";
-    fi
-fi
+    AFTER=$(($BEFORE-$(${DU} . | cut -f1)))
 
-ecrire "Temporary files removed (${AFTER}). User disc usage:"
-ecrire $(${DU}hc ~ 2> /dev/null | grep total | awk '{print $1}')
+    if [ $AFTER -lt 0 ];
+    then
+        echo "$((-$AFTER)) Kio more after clr usage." >> $LOGATION; 
+        AFTER='0 Kio';
+    else
+        if [ $AFTER -gt 1024 ];
+        then
+            AFTER=$(($AFTER/1024));
+
+            if [ $AFTER -gt 1024 ];
+            then
+                AFTER="$(($AFTER/1024)) Gio";
+            else
+                AFTER="${AFTER} Mio";
+            fi
+        else
+            AFTER="${AFTER} Kio";
+        fi
+    fi
+
+    ecrire "Temporary files removed (${AFTER}). User disc usage:"
+    ecrire $(${DU}hc ~ 2> /dev/null | grep total | awk '{print $1}')
+fi
 
 # ========== END =========== #
 # ========================== #
