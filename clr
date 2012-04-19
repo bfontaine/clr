@@ -525,6 +525,17 @@ fi
 
 rm_file ~/.psql_history "PostgreSQL commands history";
 
+# cmus
+
+if test -d ~/.cmus;
+then
+    ecrire "Cmus commands history"
+    echo -n > ~/.cmus/command-history 2>> $LOGATION;
+
+    ecrire "Cmus search history"
+    echo -n > ~/.cmus/search-history 2>> $LOGATION;
+fi
+
 # -----------------------------
 #   temporary files
 # -----------------------------
