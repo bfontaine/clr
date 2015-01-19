@@ -1,29 +1,36 @@
 #! /bin/bash
 
+__clr() {
+
 #
 # made by Baptiste Fontaine
 #
 #
-VERSION='1.5.0'
-AUTHOR='Baptiste Fontaine'
+local VERSION='1.5.0'
+local AUTHOR='Baptiste Fontaine'
 
 # -----------------------------
 #   USEFUL VARIABLES
 # -----------------------------
 
 # location of log
-LOGATION="$HOME/.clr/clr_err.log"
+local LOGATION="$HOME/.clr/clr_err.log"
 
 # username
-USERNAME=$(whoami)
+local USERNAME=$(whoami)
 
 # useful commands
-RM='rm -f'
-DU='du -s'
+local RM='rm -f'
+local DU='du -s'
+
+local BEFORE=
+local AFTER=
 
 # -----------------------------
 #   HELP
 # -----------------------------
+
+local HELP=
 
 if [ -f ${HOME}/.clr/help/clr-help-${LANG%%_*}.txt ];
 then
@@ -43,12 +50,12 @@ fi
 
 if [ $# -eq 1 ];
 then
-    if [ $1 == '--help' ];
+    if [ $1 = '--help' ];
     then
         printf "$HELP\n";
         exit 0;
     else
-        if [ $1 == '--version' ] || [ $1 == '--Version' ];
+        if [ $1 = '--version' ] || [ $1 = '--Version' ];
         then
             echo $VERSION;
             exit 0;
@@ -60,12 +67,12 @@ fi
 #  SHORT OPTIONS
 # -----------------------------
 
-DEL_LIST_FILE='None'
-RM_LAST_LOG=1
-VERBOSE=1
-LIGHTMODE=0
-RM_COOKIES=0
-CHECK_DISK_SPACE=1
+local DEL_LIST_FILE='None'
+local RM_LAST_LOG=1
+local VERBOSE=1
+local LIGHTMODE=0
+local RM_COOKIES=0
+local CHECK_DISK_SPACE=1
 
 while getopts :cdf:hklVv arg;
 do
@@ -94,7 +101,7 @@ done
 # -----------------------------
 
 # 'ecrire' means 'write' in French
-function ecrire() {
+ecrire() {
     if [ $VERBOSE -eq 1 ];
     then
         echo $*;
@@ -102,10 +109,13 @@ function ecrire() {
 }
 
 # useful variables for purge_log()
-tail='t' # means we can keep the tail of the file
-head='h' #   '   '   '   '   '   head  '   '   '
-nokeep='nk' # means no tail and no head
-default=$tail
+local tail='t' # means we can keep the tail of the file
+local head='h' #   '   '   '   '   '   head  '   '   '
+local nokeep='nk' # means no tail and no head
+local default=$tail
+
+local use_sponge=
+local tmpfilepurge=
 
 if [ $(which sponge) ];
 then
@@ -119,7 +129,7 @@ else
     fi
 fi
 
-function purge_log() {
+purge_log() {
     # purge_log <fic> <tail|head>
     
     if [ $# -eq 2 ];
@@ -153,7 +163,7 @@ function purge_log() {
     return 1;
 }
 
-function rm_file() {
+rm_file() {
     # rm_file <path> <msg>
 
     if [ -f $1 ];
@@ -199,7 +209,7 @@ ecrire 'clearing...'
 
 # clr.sh log file
 
-if [ $RM_LAST_LOG == 1 ];
+if [ $RM_LAST_LOG = 1 ];
 then
     ecrire 'Clr log file';
     purge_log $LOGATION $tail;
@@ -715,3 +725,7 @@ fi
 
 # ========== END =========== #
 # ========================== #
+
+}
+
+__clr $*
