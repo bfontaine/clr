@@ -19,3 +19,6 @@ install:
 uninstall:
 	$(RM) $(BIN)/$(TARGET)
 	$(RM) $(MAN1)/$(TARGET).1
+
+check:
+	which checkbashisms >/dev/null && checkbashisms -f $(TARGET) || true
